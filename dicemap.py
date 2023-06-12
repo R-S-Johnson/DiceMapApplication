@@ -89,28 +89,95 @@ def doubleDiceCall(n, m):
         else:
             countRet[i] = i + 1
             countRet[len(countRet)-1-i] = i + 1
-            
+
     return countRet
 
+"""
+Helper function, translates normal format of
+dice hands: 1d4 + 2d6 + ... to 2d array of
+int: [4, 6, 6, ..]
+"""
+def dNumTranslator(dformat):
+    toReturn = []
+    for di in dformat.split('+'):
+        tmp = di.strip().split('d')
+        for _ in range(int(tmp[0])):
+            toReturn.append(int(tmp[1]))
+    return toReturn
+
+
+COMMANDS = """
+Commands:
+del # - deletes indexed dice hand (and line from graph)
+add #d# + #d# + .. - adds new dice hand (and new line)
+qit - exits the program (also done by closing graph window)
+hlp - lists commands again
+"""
 
 if __name__ == "__main__":
+
+    print(COMMANDS)
+
     # gui event start
     plt.ion()
     gameOn = True
 
     # Main dice collection variable
     dice = [[6, 6]]
-    lines = []
 
     # Og figure
     fig, ax = plt.subplots()
-    linetmp, = ax.plot([i for i in range(2, 13)], diceMap(dice[0]), marker='.')
+    linetmp, = ax.plot([i for i in range(2, 13)], diceMap(dice[0]), marker='.', label="2d6")
 
-    # TODO labels
+    plt.xlabel("Sum total")
+    plt.ylabel("Probability")
+    plt.title("Probability Map")
+    plt.legend()
 
-    for _ in range(50):
+    # Draw figure
+    fig.canvas.draw()
 
-        # TODO change values here
+    # flush gui events
+    fig.canvas.flush_events()
+    time.sleep(.1)
+
+    # Main game loop
+    while gameOn:
+
+        # Print all dice hands
+        for hand in range(len(dice)):
+            print(str(hand) + ")", dice[hand])
+        
+        userIn = input('Command: ')
+
+        if len(userIn) < 3:
+            print("Invalid input! Too small")
+            continue
+
+        elif userIn[:3] == "del":
+            if len(userIn) > 4:
+                ax.lines.remove(int(userIn[4:]))
+                dice.remove(int(userIn[4:]))
+                plt.legend()
+
+        elif userIn[:3] == "add":
+            if len(userIn) > 4:
+                userInTrans = dNumTranslator(userIn[4:])
+                x = [i for i in range(len(userInTrans), sum(userInTrans)+1)]
+                lineTemp, = ax.plot(x, diceMap(userInTrans), marker='.', label=userIn[4:])
+                dice.append(userInTrans)
+                plt.legend()
+
+        elif userIn[:3] == "qit":
+            gameOn = False
+
+        elif userIn[:3] == "hlp":
+            print(COMMANDS)
+
+        else:
+            print("Invalid input!")
+            continue
+
 
         # Redraw figure
         fig.canvas.draw()
