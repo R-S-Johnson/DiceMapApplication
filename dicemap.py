@@ -27,11 +27,13 @@ from functools import reduce
 import time
 import math
 
-"""
-Insert list of dice to be roled as ints rep max face value:
-1d4 + 2d6 -> [4, 6, 6] (order unimportant).
-"""
-def diceMap(diceList, rec=False):
+
+def diceMap(diceList: list[int], rec: bool=False) -> list[int]:
+    """
+    Insert list of dice to be roled as ints rep max face value:
+    1d4 + 2d6 -> [4, 6, 6] (order unimportant).
+    """
+
     # responsible for recording the number of times each value appears
     probArray = [0]*(sum(diceList)-len(diceList)+1)
 
@@ -59,23 +61,24 @@ def diceMap(diceList, rec=False):
         return probArray
     return [i/div for i in probArray]
 
-"""
-Helper function for above. Only needs to return
-count map of 2 dice rolling
-   1 2 3 4 . .
-   -------
-1| 2 3 4 5
-2| 3 4 5 6
-3| 4 5 6 7
-4| 5 6 7 8
-.
-.
-Count map values inc/dec linearly and with a max
-limitation on the smallest die's max
-ex. 2, 4 -> [1, 2, 2, 2, 1]
-    3, 3 -> [1, 2, 3, 2, 1]
-"""
-def doubleDiceCall(n, m):
+def doubleDiceCall(n: int, m: int) -> list[int]:
+    """
+    Helper function for above. Only needs to return
+    count map of 2 dice rolling
+    1 2 3 4 . .
+    -------
+    1| 2 3 4 5
+    2| 3 4 5 6
+    3| 4 5 6 7
+    4| 5 6 7 8
+    .
+    .
+    Count map values inc/dec linearly and with a max
+    limitation on the smallest die's max
+    ex. 2, 4 -> [1, 2, 2, 2, 1]
+        3, 3 -> [1, 2, 3, 2, 1]
+    """
+
     countRet = [None]*(n+m-1)
     maxCount = min(m, n)
 
@@ -92,12 +95,13 @@ def doubleDiceCall(n, m):
 
     return countRet
 
-"""
-Helper function, translates normal format of
-dice hands: 1d4 + 2d6 + ... to 2d array of
-int: [4, 6, 6, ..]
-"""
-def dNumTranslator(dformat):
+def dNumTranslator(dformat: str) -> list[int]:
+    """
+    Helper function, translates normal format of
+    dice hands: 1d4 + 2d6 + ... to 2d array of
+    int: [4, 6, 6, ..]
+    """
+
     toReturn = []
     for di in dformat.split('+'):
         tmp = di.strip().split('d')
@@ -156,7 +160,7 @@ if __name__ == "__main__":
 
         elif userIn[:3] == "del":
             if len(userIn) > 4:
-                ax.lines.remove(int(userIn[4:]))
+                ax.lines.remove(int(userIn[4:])) # TODO method doesn't exist
                 dice.remove(int(userIn[4:]))
                 plt.legend()
 
