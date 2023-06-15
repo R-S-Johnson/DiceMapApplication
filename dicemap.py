@@ -44,7 +44,7 @@ def diceMap(diceList: list[int], rec: bool=False) -> list[int]:
     if len(diceList) == 1: # 1 dice, easy probability
         return [1/diceList[0] for _ in range(diceList[0])]
     
-    elif len(diceList) > 2: # recursive case
+    elif len(diceList) > 2: # recursive case TODO Add protection for too much recursion (limit on dice size?)
 
         # rec=true returns the count map (not probability)
         tmp = diceMap(diceList=diceList[1:], rec=True)
@@ -126,11 +126,12 @@ if __name__ == "__main__":
     plt.ion()
     gameOn = True
 
-    # Main dice collection variable
+    # Main dice and lines collection variable
     dice = [[6, 6]]
 
     # Og figure
-    fig, ax = plt.subplots()
+    fig = plt.figure()
+    ax = fig.add_subplot()
     linetmp, = ax.plot([i for i in range(2, 13)], diceMap(dice[0]), marker='.', label="2d6")
 
     plt.xlabel("Sum total")
@@ -160,7 +161,7 @@ if __name__ == "__main__":
 
         elif userIn[:3] == "del":
             if len(userIn) > 4:
-                ax.lines.remove(int(userIn[4:])) # TODO method doesn't exist
+                linetmp.remove() # TODO method doesn't exist
                 dice.remove(int(userIn[4:]))
                 plt.legend()
 
